@@ -1,4 +1,4 @@
-#include <stdio.h>
+macs#include <stdio.h>
 #include <stdlib.h>
 
 #include "ml6.h"
@@ -30,7 +30,13 @@ void add_box( struct matrix * edges,
   add_edges(edges, x, y, z, x, y, z - depth);
   add_edges(edges, x, y - height, z, x, y - height, z - depth);
   add_edges(edges, x, y - height, z, x + width, y - height, z);
-  add_edges(edges, x, y - height, z - depth, x, y - height, z - depth);
+  add_edges(edges, x, y, z - depth, x, y - height, z - depth);
+  add_edges(edges, x + width, y, z, x + width, y - height, z);
+  add_edges(edges, x + width, y, z, x + width, y, z - depth);
+  add_edges(edges, x + width, y - height, z, x + width, y - height, z - depth);
+  add_edges(edges, x + width, y, z - depth, x + width, y - height, z - depth);
+  add_edges(edges, x + width, y, z - depth, x, y, z - depth);
+  add_edges(edges, x + width, y - height, z - depth, x, y - heigh, z - depth);
 }
 
 /*======== void add_sphere() ==========

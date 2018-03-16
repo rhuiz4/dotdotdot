@@ -97,7 +97,15 @@ void parse_file ( char * filename,
     int type;
     int step = 100;
 
-    if ( strncmp(line, "circle", strlen(line)) == 0 ) {
+    if ( strncmp(line, "box", strlen(line)) == 0) {
+      fgets(line, sizeof(line), f);
+
+      sscanf(line, "%lf %lf %lf %lf %lf %lf",
+	     xvals, yvals, zvals, xvals + 1, yvals + 1, zvals + 1);
+
+      add_box( edges, xvals[0], yvals[0], zvals[0], xvals[1], yvals[1], zvals[1] );
+    }
+    else if ( strncmp(line, "circle", strlen(line)) == 0 ) {
       fgets(line, sizeof(line), f);
       //printf("CIRCLE\t%s", line);
 
