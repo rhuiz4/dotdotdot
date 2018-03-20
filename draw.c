@@ -1,4 +1,4 @@
-macs#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "ml6.h"
@@ -25,18 +25,18 @@ macs#include <stdio.h>
 void add_box( struct matrix * edges,
               double x, double y, double z,
               double width, double height, double depth ) {
-  add_edges(edges, x, y, z, x + width, y, z);
-  add_edges(edges, x, y, z, x, y - height, z);
-  add_edges(edges, x, y, z, x, y, z - depth);
-  add_edges(edges, x, y - height, z, x, y - height, z - depth);
-  add_edges(edges, x, y - height, z, x + width, y - height, z);
-  add_edges(edges, x, y, z - depth, x, y - height, z - depth);
-  add_edges(edges, x + width, y, z, x + width, y - height, z);
-  add_edges(edges, x + width, y, z, x + width, y, z - depth);
-  add_edges(edges, x + width, y - height, z, x + width, y - height, z - depth);
-  add_edges(edges, x + width, y, z - depth, x + width, y - height, z - depth);
-  add_edges(edges, x + width, y, z - depth, x, y, z - depth);
-  add_edges(edges, x + width, y - height, z - depth, x, y - heigh, z - depth);
+  add_edge(edges, x, y, z, x + width, y, z);
+  add_edge(edges, x, y, z, x, y - height, z);
+  add_edge(edges, x, y, z, x, y, z - depth);
+  add_edge(edges, x, y - height, z, x, y - height, z - depth);
+  add_edge(edges, x, y - height, z, x + width, y - height, z);
+  add_edge(edges, x, y, z - depth, x, y - height, z - depth);
+  add_edge(edges, x + width, y, z, x + width, y - height, z);
+  add_edge(edges, x + width, y, z, x + width, y, z - depth);
+  add_edge(edges, x + width, y - height, z, x + width, y - height, z - depth);
+  add_edge(edges, x + width, y, z - depth, x + width, y - height, z - depth);
+  add_edge(edges, x + width, y, z - depth, x, y, z - depth);
+  add_edge(edges, x + width, y - height, z - depth, x, y - height, z - depth);
 }
 
 /*======== void add_sphere() ==========
@@ -57,7 +57,16 @@ void add_box( struct matrix * edges,
 void add_sphere( struct matrix * edges, 
                  double cx, double cy, double cz,
                  double r, int step ) {
-  return;
+  struct matrix *points =  generate_sphere(cx, cy, cz, r, step);
+  double x, y, z;
+  int c;
+  for (c = 0; c < points->lastcol; c++){
+    x = points->m[0][c];
+    y = points->m[1][c];
+    z = points->m[2][c];
+    add_point(edges, x, y, z);
+  }
+  free_matrix(points);
 }
 
 /*======== void generate_sphere() ==========
@@ -74,7 +83,21 @@ void add_sphere( struct matrix * edges,
   ====================*/
 struct matrix * generate_sphere(double cx, double cy, double cz,
                                 double r, int step ) {
-  return NULL;
+  double theta, phi, x, y, z;
+  struct matrix *coords = new_matrix(4,1);
+  coords->lastcol = 0;
+  int p,t;
+  for(p = 0; p <= step; p++){
+    phi = 2 * M_PI * (double)p/step;
+    for(t = 0; t <= step; t ++){
+      theta = 2 * M_PI * (double)t / step;
+      x = r * cos(theta) + cx;
+      y = r * sin(theta) * cos(phi) + cy;
+      z = r * sin(theta) * sin(phi) + cz;
+      add_edge(coords, x, y, z, x, y, z);
+    }
+  }
+  return coords;
 }
 
 /*======== void add_torus() ==========
@@ -96,7 +119,17 @@ struct matrix * generate_sphere(double cx, double cy, double cz,
 void add_torus( struct matrix * edges, 
                 double cx, double cy, double cz,
                 double r1, double r2, int step ) {
-  return;
+
+  struct matrix *points =  generate_torus(cx, cy, cz, r1, r2, step);
+  double x, y, z;
+  int c;
+  for (c = 0; c < points->lastcol; c++){
+    x = points->m[0][c];
+    y = points->m[1][c];
+    z = points->m[2][c];
+    add_point(edges, x, y, z);
+  }
+  free_matrix(points);
 }
 
 /*======== void generate_torus() ==========
@@ -113,7 +146,22 @@ void add_torus( struct matrix * edges,
   ====================*/
 struct matrix * generate_torus( double cx, double cy, double cz,
                                 double r1, double r2, int step ) {
-  return NULL;
+
+  double theta, phi, x, y, z;
+  struct matrix *coords = new_matrix(4,1);
+  coords->lastcol = 0;
+  int p,t;
+  for(p = 0; p <= step; p++){
+    phi = 2 * M_PI * (double)p/step;
+    for(t = 0; t <= step; t ++){
+      theta = 2 * M_PI * (double)t / step;
+      x = cos(phi) * (r1 * cos(theta) + r2) + cx;
+      y = r1 * sin(theta) + cy;
+      z = (-1 * sin(phi) * (r1 * cos(theta) + r2)) + cz;
+      add_edge(coords, x, y, z, x, y, z);
+    }
+  }
+  return coords;
 }
 
 /*======== void add_circle() ==========
